@@ -1,21 +1,20 @@
 from scipy.special import loggamma
 import numpy as np
 
-"""Helper functions
-"""
+
 def transform_to_alpha_beta(logit_mean, log_sample_size):
+    """Helper function"""
     beta = np.exp(log_sample_size)/(1+np.exp(logit_mean))
     alpha = np.exp(logit_mean)*beta
     return alpha, beta
 
 def transform_from_alpha_beta(alpha, beta):
+    """Helper function"""
     logit_mean = np.log(alpha/beta)
     log_sample_size = np.log(alpha+beta)
     return logit_mean, log_sample_size
 
 
-"""Different pdfs or parts of them
-"""
 
 def some_diffuse_prior_log(alpha, beta):
     """The log of a suggested prior."""
