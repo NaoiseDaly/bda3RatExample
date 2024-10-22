@@ -21,6 +21,9 @@ def some_diffuse_prior_log(alpha, beta):
     """The log of a suggested prior."""
     return np.log(alpha+beta)*(-5/2)
 
+def uniform_prior_log(alpha, beta):
+    return 0
+
 def messy_part_in_posterior_log(alpha, beta, d):
     """The log of the 'non-prior' part of the posterior"""
     parts = [None for _ in range(d.shape[0])]
@@ -36,8 +39,3 @@ def unnormalised_posterior(alpha, beta, prior, data):
     print(mess)
     print(np.exp(mess))
     return mess+prior(alpha, beta)
-
-
-GRID = {"logit_mean":np.linspace(-2.3,-1.3, num = 100)
-     ,"log_sample_size":np.linspace(1,5, num = 100)
-     }   

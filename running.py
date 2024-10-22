@@ -10,7 +10,7 @@ GRID = {"logit_mean":np.linspace(-2.3,-1.3, num = 1000)
      } 
 
 alpha_on_grid, beta_on_grid = transform_to_alpha_beta(GRID["logit_mean"], GRID["log_sample_size"])
-alpha_on_grid_mesh, beta_on_grid_mesh = np.meshgrid(alpha_on_grid, beta_on_grid)
+alpha_on_grid_mesh, beta_on_grid_mesh = np.meshgrid(alpha_on_grid, beta_on_grid, sparse = True)
 
 
 output = unnormalised_posterior(
@@ -20,7 +20,19 @@ output = unnormalised_posterior(
 GRID["posterior"] = output 
 
 plt.contourf(
-        GRID["logit_mean"], GRID["log_sample_size"], GRID["posterior"]
+        alpha_on_grid, beta_on_grid, GRID["posterior"]
+    )
+
+plt.colorbar()
+plt.show()
+
+
+output2 = unnormalised_posterior(
+    alpha_on_grid_mesh,beta_on_grid_mesh
+    ,uniform_prior_log,dataset)
+
+plt.contourf(
+        alpha_on_grid, beta_on_grid, output2
     )
 
 plt.colorbar()
