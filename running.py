@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 dataset = pd.read_csv("tumour-data.txt", names = ("y.j", "n.j"))
 
 
-GRID = {"logit_mean":np.linspace(-2.3,-1.3, num = 1000)
-     ,"log_sample_size":np.linspace(1,5, num = 1000)
+GRID = {"logit_mean":np.linspace(-2.3,-1.3, num = 100)
+     ,"log_sample_size":np.linspace(1,5, num = 100)
      } 
 GRID["alpha"], GRID["beta"] = transform_to_alpha_beta(GRID["logit_mean"], GRID["log_sample_size"])
 
@@ -25,10 +25,20 @@ print(f"after {GRID["posterior"].sum()}, {GRID["posterior"].shape}")
 plt.contourf(
         GRID["alpha"], GRID["beta"], GRID["posterior"]
     )
-
+plt.xlabel("alpha")
+plt.ylabel("beta")
 plt.colorbar()
 plt.show()
 
+
+
+plt.contourf(
+        GRID["logit_mean"], GRID["log_sample_size"], GRID["posterior"]
+    )
+plt.xlabel("logit_mean")
+plt.ylabel("log_sample_size")
+plt.colorbar()
+plt.show()
 
 posterior_alpha = marginal_of_alpha_on_grid(GRID["posterior"])
 plt.bar(GRID["alpha"], posterior_alpha)
