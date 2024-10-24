@@ -32,6 +32,7 @@ plt.show()
 
 posterior_alpha = marginal_of_alpha_on_grid(GRID["posterior"])
 plt.bar(GRID["alpha"], posterior_alpha)
+print(sum(posterior_alpha))
 plt.show()
 
 
