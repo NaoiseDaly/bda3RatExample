@@ -35,6 +35,13 @@ def messy_part_in_posterior_log(alpha, beta, d):
 
 def unnormalised_posterior(alpha, beta, prior, data):
     mess = messy_part_in_posterior_log(alpha, beta, data)
-    print(mess)
-    print(np.exp(mess))
-    return mess+prior(alpha, beta)
+    return np.exp(mess+prior(alpha, beta))
+
+
+
+def normalise_grid(grid):
+    return grid/grid.sum()
+
+def marginal_of_alpha_on_grid(grid):
+    "Careful: This depends on design of GRID "
+    return grid.sum(axis =  0)

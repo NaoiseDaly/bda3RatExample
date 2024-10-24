@@ -8,9 +8,9 @@ dataset = pd.read_csv("tumour-data.txt", names = ("y.j", "n.j"))
 GRID = {"logit_mean":np.linspace(-2.3,-1.3, num = 1000)
      ,"log_sample_size":np.linspace(1,5, num = 1000)
      } 
+GRID["alpha"], GRID["beta"] = transform_to_alpha_beta(GRID["logit_mean"], GRID["log_sample_size"])
 
-alpha_on_grid, beta_on_grid = transform_to_alpha_beta(GRID["logit_mean"], GRID["log_sample_size"])
-alpha_on_grid_mesh, beta_on_grid_mesh = np.meshgrid(alpha_on_grid, beta_on_grid, sparse = True)
+alpha_on_grid_mesh, beta_on_grid_mesh = np.meshgrid(GRID["alpha"], GRID["beta"], sparse = True)
 
 
 output = unnormalised_posterior(
@@ -18,23 +18,20 @@ output = unnormalised_posterior(
     ,some_diffuse_prior_log,dataset)
 
 GRID["posterior"] = output 
+print(f"before {GRID["posterior"].sum()}, {GRID["posterior"].shape}")
+GRID["posterior"] = normalise_grid(GRID["posterior"])
+print(f"after {GRID["posterior"].sum()}, {GRID["posterior"].shape}")
 
 plt.contourf(
-        alpha_on_grid, beta_on_grid, GRID["posterior"]
+        GRID["alpha"], GRID["beta"], GRID["posterior"]
     )
 
 plt.colorbar()
 plt.show()
 
 
-output2 = unnormalised_posterior(
-    alpha_on_grid_mesh,beta_on_grid_mesh
-    ,uniform_prior_log,dataset)
-
-plt.contourf(
-        alpha_on_grid, beta_on_grid, output2
-    )
-
-plt.colorbar()
+posterior_alpha = marginal_of_alpha_on_grid(GRID["posterior"])
+plt.bar(GRID["alpha"], posterior_alpha)
 plt.show()
-# print(dataset.loc[0])
+
+
