@@ -26,13 +26,16 @@ def uniform_prior_log(alpha, beta):
 
 def messy_part_in_posterior_log(alpha, beta, d):
     """The log of the 'non-prior' part of the posterior"""
-    parts = [None for _ in range(d.shape[0])]
-    for j in range(d.shape[0]):
-        top = loggamma(alpha+beta)+loggamma(alpha+d.loc[j, "y.j"])+loggamma(beta+d.loc[j, "n.j"]-d.loc[j, "y.j"])
-        bottom = loggamma(alpha)+loggamma(beta)+loggamma(alpha+beta+d.loc[j, "n.j"])
-        parts[j] = top-bottom 
+    J = d.shape[0] # number of observations
+    #first fraction is just raised to power of J
+    first_fraction = J*(loggamma(alpha+beta)-loggamma(alpha)-loggamma(beta))
+    second_fractions = [None for _ in range(J)]
+    for j in range(J):
+        top = loggamma(alpha+d.loc[j, "y.j"])+loggamma(beta+d.loc[j, "n.j"]-d.loc[j, "y.j"])
+        bottom = loggamma(alpha+beta+d.loc[j, "n.j"])
+        second_fractions[j] = top-bottom 
     
-    return sum(parts)
+    return first_fraction+sum(second_fractions)
 
 def unnormalised_posterior(alpha, beta, prior, data):
     mess = messy_part_in_posterior_log(alpha, beta, data)
