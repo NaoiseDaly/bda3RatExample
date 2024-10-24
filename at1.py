@@ -50,11 +50,12 @@ def marginal_of_alpha_on_grid(grid):
     "Careful: This depends on design of GRID "
     return grid.sum(axis =  0)
 
-def sample_from_empirical_dist( emp_dist,  random_state = None):
+def sample_from_empirical_dist_new(n, values, emp_dist,  random_state = None):
     """assumes univariate distribution and generates a single sample
     
     could improve by allowing multiple samples"""
     emp_cdf = np.cumsum(emp_dist)
-    u = uniform.rvs(size = 1, random_state=random_state  )
-    draw = np.where(emp_cdf  == np.min(emp_cdf[emp_cdf > u]) )[0][0]
-    return  draw
+    draws = np.zeros(n)
+    for i, u in enumerate(  uniform.rvs(size = n, random_state=random_state) ):
+        draws[i] = values[np.min( np.where(emp_cdf > u) )]
+    return  draws
