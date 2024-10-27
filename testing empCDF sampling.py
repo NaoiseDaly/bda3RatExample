@@ -5,7 +5,7 @@ vals = np.array(range(5))
 dist = np.array([.1,.3,.3,.1,.2])
 
 
-draws = sample_from_empirical_dist_new(2000, vals, dist)
+draws = sample_from_empirical_dist(2000, vals, dist)
 fig, (ax1, ax2) = plt.subplots(1,2)
 ax1.bar(vals, dist)
 ax1.set_title("theoretic")
