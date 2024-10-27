@@ -50,6 +50,14 @@ def marginal_of_alpha_on_grid(grid):
     "Careful: This depends on design of GRID "
     return grid.sum(axis =  0)
 
+def beta_on_grid_given_alpha(grid, alpha):
+    "Careful: This depends on design of GRID "
+    alpha_i = np.where(np.isclose(grid["alpha"], alpha)) 
+    alpha_i = alpha_i[0] #should be only one element in this
+    beta_given_alpha_dist = grid["posterior"][alpha_i]/grid["posterior"][alpha_i].sum()
+    
+    return beta_given_alpha_dist
+
 def sample_from_empirical_dist(n, values, dist,  random_state = None):
     """generates n samples from a collection values with distribution dist
     

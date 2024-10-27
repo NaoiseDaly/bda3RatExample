@@ -49,5 +49,9 @@ ax2.bar(values, heights)
 ax2.set_title(f"frequency of {s} simulated draws from posterior")
 plt.show()
 
+draws_of_beta_given_alpha = np.array([None for _ in range(s)])
 
-
+for i, alpha_sample in enumerate(draws_of_alpha):
+    beta_dist = beta_on_grid_given_alpha(GRID, alpha_sample)
+    beta_sample = sample_from_empirical_dist(1, GRID["beta"], beta_dist )[0]
+    draws_of_beta_given_alpha[i] = beta_sample
