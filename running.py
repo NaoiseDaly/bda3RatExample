@@ -1,7 +1,8 @@
 from at1 import *
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import uniform
+from scipy.stats import uniform, beta
+import random
 
 dataset = pd.read_csv("tumour-data.txt", names = ("y.j", "n.j"))
 
@@ -65,16 +66,28 @@ fig, (ax1, ax2) = plt.subplots(1,2)
 ax1.scatter(draws_of_alpha, draws_of_beta_given_alpha)
 ax1.set_xlabel("alpha")
 ax1.set_ylabel("beta")
+ax1.set_title(f"{s} simulations of hyperparameters")
 
 ax2.scatter(*transform_from_alpha_beta(draws_of_alpha, draws_of_beta_given_alpha))
 ax2.set_xlabel("logit_mean")
 ax2.set_ylabel("log_sample_size")
+ax2.set_title(f"{s} simulations of transformed hyperparameters")
+
 plt.show()
 
-fig, (ax1, ax2) = plt.subplots(1,2, sharex = True)
-ax1.bar(GRID["alpha"], posterior_alpha)
-ax1.set_title("marginal unnormalised posterior of alpha")
-values, heights = np.unique(draws_of_alpha, return_counts=True)
-ax2.bar(values, heights)
-ax2.set_title(f"frequency of {s} simulated draws from posterior")
-plt.show()
+# fig, (ax1, ax2) = plt.subplots(1,2, sharex = True)
+# ax1.bar(GRID["alpha"], posterior_alpha)
+# ax1.set_title("marginal unnormalised posterior of alpha")
+# values, heights = np.unique(draws_of_alpha, return_counts=True)
+# ax2.bar(values, heights)
+# ax2.set_title(f"frequency of {s} simulated draws from posterior")
+# plt.show()
+
+
+#sample theta
+rand_i = random.choice(range(s))
+print(rand_i)
+specific_alpha, specific_beta = draws_of_alpha[rand_i], draws_of_beta_given_alpha[rand_i]
+rand_i = random.choice(seq = range(71))
+specific_y, specific_n = dataset.loc[rand_i,]
+print(specific_y, specific_n)
