@@ -5,8 +5,8 @@ import numpy as np
 
 def transform_to_alpha_beta(logit_mean, log_sample_size):
     """Helper function"""
-    beta = np.exp(log_sample_size)/(1+np.exp(logit_mean))
-    alpha = np.exp(logit_mean)*beta
+    beta = np.exp(log_sample_size) /(1+np.exp(logit_mean))
+    alpha = np.exp(log_sample_size + logit_mean) /(1+np.exp(logit_mean))
     return alpha, beta
 
 def transform_from_alpha_beta(alpha, beta):
@@ -29,9 +29,10 @@ def messy_part_in_posterior_log(alpha, beta, d):
     J = d.shape[0] # number of observations
     #first fraction is just raised to power of J
     first_fraction = J*(loggamma(alpha+beta)-loggamma(alpha)-loggamma(beta))
+    
     second_fractions = [None for _ in range(J)]
     for j in range(J):
-        top = loggamma(alpha+d.loc[j, "y.j"])+loggamma(beta+d.loc[j, "n.j"]-d.loc[j, "y.j"])
+        top = loggamma(alpha+d.loc[j, "y.j"]) + loggamma(beta+d.loc[j, "n.j"]-d.loc[j, "y.j"])
         bottom = loggamma(alpha+beta+d.loc[j, "n.j"])
         second_fractions[j] = top-bottom 
     
