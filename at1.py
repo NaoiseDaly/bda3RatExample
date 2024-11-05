@@ -11,7 +11,7 @@ def transform_to_alpha_beta(logit_mean, log_sample_size):
 
 def transform_from_alpha_beta(alpha, beta):
     """Helper function"""
-    logit_mean = np.log(alpha/beta)
+    logit_mean = np.log(alpha) - np.log(beta)
     log_sample_size = np.log(alpha+beta)
     return logit_mean, log_sample_size
 

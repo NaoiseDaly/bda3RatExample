@@ -6,17 +6,21 @@ import random
 
 dataset = pd.read_csv("tumour-data.txt", names = ("y.j", "n.j"))
 
-SIZE_OF_GRID = 100
-#equal spacing on the transformed scale does not mean equal spacing on the original scale
-alpha_boundaries, beta_boundaries = transform_to_alpha_beta((-2.3,-1.3), (1, 5))
-STEP_SIZE_IN_ALPHA = (alpha_boundaries[1]-alpha_boundaries[0])/SIZE_OF_GRID
-STEP_SIZE_IN_BETA = (beta_boundaries[1]-beta_boundaries[0])/SIZE_OF_GRID
+SIZE_OF_GRID = 500
+# #equal spacing on the transformed scale does not mean equal spacing on the original scale
+# alpha_boundaries, beta_boundaries = transform_to_alpha_beta((-2.3,-1.3), (1, 5))
+# STEP_SIZE_IN_ALPHA = (alpha_boundaries[1]-alpha_boundaries[0])/SIZE_OF_GRID
+# STEP_SIZE_IN_BETA = (beta_boundaries[1]-beta_boundaries[0])/SIZE_OF_GRID
 
-GRID ={
-    "alpha": np.linspace(*alpha_boundaries, num = SIZE_OF_GRID),
-    "beta" : np.linspace(*beta_boundaries, num = SIZE_OF_GRID)
-}
-GRID["logit_mean"], GRID["log_sample_size"] = transform_from_alpha_beta(GRID["alpha"], GRID["beta"])
+# GRID ={
+#     "alpha": np.linspace(*alpha_boundaries, num = SIZE_OF_GRID),
+#     "beta" : np.linspace(*beta_boundaries, num = SIZE_OF_GRID)
+# }
+# GRID["logit_mean"], GRID["log_sample_size"] = transform_from_alpha_beta(GRID["alpha"], GRID["beta"])
+GRID = {}
+GRID["logit_mean"] = np.linspace(-2.3,-1.3, num = SIZE_OF_GRID)
+GRID["log_sample_size"] = np.linspace(1,5, num = SIZE_OF_GRID)
+GRID["alpha"], GRID["beta"] = transform_to_alpha_beta(GRID["logit_mean"], GRID["log_sample_size"])
 
 alpha_on_grid_mesh, beta_on_grid_mesh = np.meshgrid(GRID["alpha"], GRID["beta"], sparse = True)
 
@@ -56,9 +60,9 @@ for i, alpha_sample in enumerate(draws_of_alpha):
     beta_sample = sample_from_empirical_dist(1, GRID["beta"], beta_dist )[0]
     draws_of_beta_given_alpha[i] = beta_sample
 
-#add jitter to sampled pairs
-draws_of_alpha += uniform.rvs(size = s, scale = STEP_SIZE_IN_ALPHA)
-draws_of_beta_given_alpha += uniform.rvs(size = s, scale = STEP_SIZE_IN_BETA)
+# #add jitter to sampled pairs
+# draws_of_alpha += uniform.rvs(size = s, scale = STEP_SIZE_IN_ALPHA)
+# draws_of_beta_given_alpha += uniform.rvs(size = s, scale = STEP_SIZE_IN_BETA)
 
 
 fig, (ax1, ax2) = plt.subplots(1,2)
