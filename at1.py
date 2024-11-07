@@ -1,4 +1,4 @@
-from scipy.special import loggamma
+from scipy.special import betaln
 from scipy.stats import uniform
 import numpy as np
 
@@ -16,7 +16,6 @@ def transform_from_alpha_beta(alpha, beta):
     return logit_mean, log_sample_size
 
 
-
 def some_diffuse_prior_log(alpha, beta):
     """The log of a suggested prior."""
     return np.log(alpha+beta)*(-5/2)
@@ -26,21 +25,25 @@ def uniform_prior_log(alpha, beta):
 
 def messy_part_in_posterior_log(alpha, beta, d):
     """The log of the 'non-prior' part of the posterior"""
-    J = d.shape[0] # number of observations
-    #first fraction is just raised to power of J
-    first_fraction = J*(loggamma(alpha+beta)-loggamma(alpha)-loggamma(beta))
+    #first fraction is just raised to power of # observations
+    # the fraction is also a flipped beta function so raise to power -1
+    first_fraction = -d.shape[0]*betaln(alpha, beta)
+    second_fraction = d.apply(
+        lambda row:
+        betaln(alpha+row["y.j"], beta+row["n.j"]-row["y.j"])
+        , axis = 1
+    ).sum()
     
-    second_fractions = [None for _ in range(J)]
-    for j in range(J):
-        top = loggamma(alpha+d.loc[j, "y.j"]) + loggamma(beta+d.loc[j, "n.j"]-d.loc[j, "y.j"])
-        bottom = loggamma(alpha+beta+d.loc[j, "n.j"])
-        second_fractions[j] = top-bottom 
-    
-    return first_fraction+sum(second_fractions)
+    return first_fraction+second_fraction
 
-def unnormalised_posterior(alpha, beta, prior, data):
-    mess = messy_part_in_posterior_log(alpha, beta, data)
-    return np.exp(mess+prior(alpha, beta))
+def log_unnormalised_posterior_original(alpha, beta, prior, data):
+    return messy_part_in_posterior_log(alpha, beta, data) + prior(alpha, beta)
+
+def log_unnormalised_posterior_transform(alpha, beta, prior, data):
+    "return posterior on transformed scale by multiplying jacobian, given original scale as inputs"
+    original_posterior = log_unnormalised_posterior_original(alpha, beta, prior, data)
+    jacobian = np.log(alpha)+np.log(beta)
+    return original_posterior + jacobian
 
 
 
